@@ -228,7 +228,28 @@ function getRectangleString(width, height) {
  *
  */
 function encodeToRot13(str) {
-    throw new Error('Not implemented');
+    var i = 0;
+    var result = '';
+    while (i < str.length) {
+        var bigLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        var smallLetters = 'abcdefghijklmnopqrstuvwxyz'
+        var newLetter = ''
+        var code = str.charCodeAt(i) 
+        if (code >=97 && code <= 122) {
+            var pos = smallLetters.indexOf(str[i]) + 13;
+            var newLetter = smallLetters[pos % smallLetters.length]
+            result += newLetter;
+        }
+        else if (code >=65 && code <= 90) {
+            var pos = bigLetters.indexOf(str[i]) + 13;
+            var newLetter = bigLetters[pos % bigLetters.length]
+            result += newLetter;
+        } else {
+            result += str[i];
+        }
+        i += 1;
+    }
+    return result;
 }
 
 /**
