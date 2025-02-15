@@ -526,9 +526,18 @@ function distinct(arr) {
  *   }
  */
 function group(array, keySelector, valueSelector) {
-   throw new Error('Not implemented');
-}
+   return array.reduce((map, item) => {
+      const key = keySelector(item);
+      const value = valueSelector(item);
 
+      if (!map.has(key)) {
+          map.set(key, []);
+      }
+      map.get(key).push(value);
+
+      return map;
+  }, new Map())
+}
 
 /**
  * Projects each element of the specified array to a sequence and flattens the resulting sequences into one array.
