@@ -269,7 +269,7 @@ function getSecondItems(arr) {
  *  [ 1,2,3,4,5 ] => [ 1, 2,2, 3,3,3, 4,4,4,4, 5,5,5,5,5 ]
  */
 function propagateItemsByPositionIndex(arr) {
-   throw new Error('Not implemented');
+   return arr.flatMap((item, index) => Array(index + 1).fill(item));
 }
 
 
@@ -287,7 +287,8 @@ function propagateItemsByPositionIndex(arr) {
  *   [ 10, 10, 10, 10 ] => [ 10, 10, 10 ]
  */
 function get3TopItems(arr) {
-   throw new Error('Not implemented');
+   var sortedArr = arr.sort((a, b) => b-a)
+   return sortedArr.slice(0, 3)
 }
  
  
@@ -305,7 +306,7 @@ function get3TopItems(arr) {
  *   [ 1, '2' ] => 1
  */
 function getPositivesCount(arr) {
-   throw new Error('Not implemented');
+   return arr.reduce((acc, value) => (typeof value === 'number' && value > 0) ? acc + 1 : acc, 0);
 }
  
 /** 
@@ -322,7 +323,20 @@ function getPositivesCount(arr) {
  *   [ 'one','one','one','zero' ]     => [ 'zero','one','one','one' ]
  */
 function sortDigitNamesByNumericOrder(arr) {
-   throw new Error('Not implemented');
+   const digitNameToNumber = {
+       zero: 0,
+       one: 1,
+       two: 2,
+       three: 3,
+       four: 4,
+       five: 5,
+       six: 6,
+       seven: 7,
+       eight: 8,
+       nine: 9
+   };
+   return arr.sort((a, b) => digitNameToNumber[a] - digitNameToNumber[b]);
+
 }
 
 /** 
@@ -338,7 +352,7 @@ function sortDigitNamesByNumericOrder(arr) {
  *   [ 1, 10, 100, 1000 ]  => 1111
  */
 function getItemsSum(arr) {
-   throw new Error('Not implemented');
+   return arr.reduce((acc, val) => acc + val, 0)
 }
  
 /** 
@@ -354,7 +368,7 @@ function getItemsSum(arr) {
  *  [ null, undefined, NaN, false, 0, '' ]  => 6
  */
 function getFalsyValuesCount(arr) {
-   throw new Error('Not implemented');
+   return arr.reduce((acc, val) => (! val) ? acc +1: acc, 0)
 }
 
 /**
@@ -372,7 +386,7 @@ function getFalsyValuesCount(arr) {
  *    [ true, 0, 1, 'true' ], true => 1
  */
 function findAllOccurences(arr, item) {
-   throw new Error('Not implemented');
+   return arr.reduce((acc, val) => val===item ? acc +1: acc, 0)
 }
 
 /**
@@ -387,7 +401,7 @@ function findAllOccurences(arr, item) {
  *    ['rock', 'paper', 'scissors']     => 'rock,paper,scissors'
  */
 function toStringList(arr) {
-   throw new Error('Not implemented');
+   return arr.join(',')
 }
 
 
