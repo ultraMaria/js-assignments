@@ -73,9 +73,8 @@ function getAverage(value1, value2) {
  *   (-5,0) (10,-10) => 18.027756377319946
  */
 function getDistanceBetweenPoints(x1, y1, x2, y2) {
-    throw new Error('Not implemented');
+    return Math.sqrt((x2-x1)**2+(y2-y1)**2)
 }
-
 /**
  * Returns a root of linear equation a*x + b = 0 given by coefficients a and b.
  *
@@ -89,7 +88,7 @@ function getDistanceBetweenPoints(x1, y1, x2, y2) {
  *   5*x = 0         => 0
  */
 function getLinearEquationRoot(a, b) {
-    throw new Error('Not implemented');
+    return -b/a
 }
 
 
@@ -111,7 +110,11 @@ function getLinearEquationRoot(a, b) {
  *   (0,1) (1,2)     => 0
  */
 function getAngleBetweenVectors(x1, y1, x2, y2) {
-    throw new Error('Not implemented');
+    var dotProduct = x1 * x2 + y1 * y2;
+    var magnitude1 = Math.sqrt(x1 * x1 + y1 * y1);
+    var magnitude2 = Math.sqrt(x2 * x2 + y2 * y2);
+    var cosTheta = dotProduct / (magnitude1 * magnitude2);
+    return Math.acos(cosTheta);
 }
 
 /**
@@ -127,7 +130,7 @@ function getAngleBetweenVectors(x1, y1, x2, y2) {
  *     0     => 0
  */
 function getLastDigit(value) {
-    throw new Error('Not implemented');
+    return value % 10
 }
 
 
@@ -143,7 +146,7 @@ function getLastDigit(value) {
  * '-525.5'     => -525.5
  */
 function parseNumberFromString(value) {
-    throw new Error('Not implemented');
+    return Number(value)
 }
 
 /**
@@ -160,7 +163,7 @@ function parseNumberFromString(value) {
  *   1,2,3   => 3.741657386773941
  */
 function getParallelipidedDiagonal(a,b,c) {
-    throw new Error('Not implemented');
+    return Math.sqrt(a * a + b * b + c * c);
 }
 
 /**
@@ -181,7 +184,8 @@ function getParallelipidedDiagonal(a,b,c) {
  *   1678, 3  => 2000
  */
 function roundToPowerOfTen(num, pow) {
-    throw new Error('Not implemented');
+    var multiplier = Math.pow(10, pow);
+    return Math.round(num / multiplier) * multiplier; 
 }
 
 /**
@@ -202,7 +206,12 @@ function roundToPowerOfTen(num, pow) {
  *   17 => true
  */
 function isPrime(n) {
-    throw new Error('Not implemented');
+    for (var i = 2; i<n ;i++) {
+        if (n%i === 0) {
+            return false
+        }
+    }
+    return true
 }
 
 /**
@@ -219,9 +228,10 @@ function isPrime(n) {
  *   toNumber('1', 0) => 1
  *   toNumber(42, 0) => 42
  *   toNumber(new Number(42), 0) => 42
- */
-function toNumber(value, def) {
-    throw new Error('Not implemented');
+ */ 
+function toNumber(value, def) {    
+    var num = Number(value); 
+    return isNaN(num) ? def : num;
 }
 
 module.exports = {
