@@ -430,7 +430,12 @@ function toStringList(arr) {
  *      { country: 'Russia',  city: 'Saint Petersburg' }
  */
 function sortCitiesArray(arr) {
-   throw new Error('Not implemented');
+   return arr.sort((a, b) => {
+       const countryComparison = a.country.localeCompare(b.country);
+       if (countryComparison !== 0) return countryComparison;
+
+       return a.city.localeCompare(b.city);
+   });
 }
 
 /**
@@ -452,7 +457,9 @@ function sortCitiesArray(arr) {
  *           [0,0,0,0,1]]   
  */
 function getIdentityMatrix(n) {
-   throw new Error('Not implemented');
+   var arr = Array(n).fill(0).map(()=>Array(n).fill(0))
+   arr.flatMap((item, index) => item[index] = 1);
+   return arr
 }
 
 /**
@@ -469,7 +476,8 @@ function getIdentityMatrix(n) {
  *     3, 3   => [ 3 ]
  */
 function getIntervalArray(start, end) {
-   throw new Error('Not implemented');
+   var length = end - start + 1;
+   return Array(length).fill().map((_, index) => start + index);
 }
 
 /**
@@ -484,7 +492,7 @@ function getIntervalArray(start, end) {
  *   [ 1, 1, 2, 2, 3, 3, 4, 4] => [ 1, 2, 3, 4]
  */
 function distinct(arr) {
-   throw new Error('Not implemented');
+   return [...new Set(arr)];
 }
 
 /**
