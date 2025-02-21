@@ -536,9 +536,24 @@ function toNaryString(num, n) {
  *   ['/web/favicon.ico', '/web-scripts/dump', '/webalizer/logs'] => '/'
  */
 function getCommonDirectoryPath(pathes) {
-    throw new Error('Not implemented');
-}
+    if (pathes.length === 0) return '';
+    var splitPaths = pathes.map(path => path.split('/'));
+    var minParts = Math.min(...splitPaths.map(parts => parts.length));
+    var commonPath = '';
+    for (let i = 0; i < minParts; i++) {
+        var currentPart = splitPaths[0][i];
 
+        var isCommon = splitPaths.every(parts => parts[i] === currentPart);
+
+        if (isCommon) {
+            commonPath += currentPart + '/';
+        } else {
+            break;
+        }
+    }
+
+    return commonPath;
+}
 
 /**
  * Returns the product of two specified matrixes.
