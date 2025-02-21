@@ -446,10 +446,49 @@ function isBracketsBalanced(str) {
  *   Date('2000-01-01 01:00:00.100'), Date('2015-01-02 03:00:05.000')  => '15 years ago'
  *
  */
-function timespanToHumanString(startDate, endDate) {
-    throw new Error('Not implemented');
+function round(number) {
+    const decimalPart = number - Math.floor(number);
+    if (decimalPart > 0.5) {
+        return Math.ceil(number);
+    } else {
+        return Math.floor(number);
+    }
 }
 
+function timespanToHumanString(startDate, endDate) {
+    const diffInMilliseconds = endDate - startDate;
+    const diffInSeconds = diffInMilliseconds / 1000;
+    const diffInMinutes = diffInSeconds / 60;
+    const diffInHours = diffInMinutes / 60;
+    const diffInDays = diffInHours / 24;
+    const diffInMonths = diffInDays / 30;
+    const diffInYears = diffInDays / 365;
+
+    if (diffInSeconds <= 45) {
+        return 'a few seconds ago';
+    } else if (diffInSeconds <= 90) {
+        return 'a minute ago';
+    } else if (diffInMinutes <= 45) {
+        return `${round(diffInMinutes)} minutes ago`;
+    } else if (diffInMinutes <= 90) {
+        return 'an hour ago';
+    } else if (diffInHours <= 22) {
+        return `${round(diffInHours)} hours ago`;
+    } else if (diffInHours <= 36) {
+        return 'a day ago';
+    } else if (diffInDays <= 25) {
+        return `${round(diffInDays)} days ago`;
+    } else if (diffInDays <= 45) {
+        return 'a month ago';
+    } else if (diffInDays <= 345) {
+        return `${round(diffInMonths)} months ago`;
+    } else if (diffInDays <= 545) {
+        return 'a year ago';
+    } else {
+        return `${round(diffInYears)} years ago`;
+    }
+}
+   
 
 /**
  * Returns the string with n-ary (binary, ternary, etc, where n<=10) representation of specified number.
