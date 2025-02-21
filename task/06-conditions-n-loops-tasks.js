@@ -510,7 +510,16 @@ function timespanToHumanString(startDate, endDate) {
  *    365, 10 => '365'
  */
 function toNaryString(num, n) {
-    throw new Error('Not implemented');
+    var res = ''
+    while (num > 1) {
+        var remainder = num % n
+        res += remainder.toString()
+        num = Math.floor(num / n)
+    }
+    if (num === 1) {
+        res += '1'
+    }
+    return res.split("").reverse().join("")
 }
 
 
