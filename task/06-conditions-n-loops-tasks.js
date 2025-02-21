@@ -135,7 +135,21 @@ function isTriangle(a,b,c) {
  *  
  */
 function doRectanglesOverlap(rect1, rect2) {
-    throw new Error('Not implemented');
+    const rect1Right = rect1.left + rect1.width;
+    const rect1Bottom = rect1.top + rect1.height;
+
+    const rect2Right = rect2.left + rect2.width;
+    const rect2Bottom = rect2.top + rect2.height;
+
+    if (rect1Right <= rect2.left || rect2Right <= rect1.left) {
+        return false;
+    }
+
+    if (rect1Bottom <= rect2.top || rect2Bottom <= rect1.top) {
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -166,7 +180,11 @@ function doRectanglesOverlap(rect1, rect2) {
  *   
  */
 function isInsideCircle(circle, point) {
-    throw new Error('Not implemented');
+    const dx = point.x - circle.center.x;
+    const dy = point.y - circle.center.y;
+    const distanceSquared = dx * dx + dy * dy;
+
+    return distanceSquared < circle.radius * circle.radius;
 }
 
 
@@ -303,9 +321,24 @@ function reverseInteger(num) {
  *   4916123456789012 => false
  */
 function isCreditCardNumber(ccn) {
-    throw new Error('Not implemented');
-}
+    const ccnStr = ccn.toString();
+    let sum = 0;
 
+    for (let i = 0; i < ccnStr.length; i++) {
+        let digit = parseInt(ccnStr[ccnStr.length - 1 - i], 10); 
+
+        if (i % 2 !== 0) {
+            digit *= 2;
+            if (digit > 9) {
+                digit = digit - 9;
+            }
+        }
+
+        sum += digit;
+    }
+
+    return sum % 10 === 0;
+}
 
 /**
  * Returns the digital root of integer:
