@@ -273,7 +273,12 @@ function reverseString(str) {
  *   34143 => 34143
  */
 function reverseInteger(num) {
-    throw new Error('Not implemented');
+    var str = num.toString()
+    var res = ''
+    for(var i=str.length-1; i>=0; i--) {
+        res =  res+ str[i]
+    }
+    return Number(res);
 }
 
 
@@ -317,7 +322,20 @@ function isCreditCardNumber(ccn) {
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
 function getDigitalRoot(num) {
-    throw new Error('Not implemented');
+    var str = num.toString()
+    var res = 0
+    while (true) {
+        for(var i=0; i<str.length; i++) {
+            res = res+ Number(str[i])
+        }
+        if (res < 10) {
+            break
+        } else {
+            str = res.toString()
+            res = 0
+        }
+    }
+    return res
 }
 
 
