@@ -114,37 +114,149 @@ function fromJSON(proto, json) {
  *  For more examples see unit tests.
  */
 
-const cssSelectorBuilder = {
+class CssSelector {
+    constructor() {
+        this.parts = [];
+        this.order = ['element', 'id', 'class', 'attr', 'pseudoClass', 'pseudoElement'];
+        this.occurrence = {
+            element: false,
+            id: false,
+            pseudoElement: false,
+        };
+    }
 
+    // Helper method to validate the order of selector parts
+    _validateOrder(newPartType) {
+        if (this.parts.length > 0) {
+            const lastPartType = this.parts[this.parts.length - 1].type;
+            const lastIndex = this.order.indexOf(lastPartType);
+            const newIndex = this.order.indexOf(newPartType);
+
+            if (newIndex < lastIndex) {
+                throw new Error(
+                    'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+                );
+            }
+        }
+    }
+
+    element(value) {
+        if (this.occurrence.element) {
+            throw new Error(
+                'Element, id and pseudo-element should not occur more than once inside the selector'
+            );
+        }
+        this._validateOrder('element');
+        this.occurrence.element = true;
+        this.parts.push({ type: 'element', value });
+        return this;
+    }
+
+    id(value) {
+        if (this.occurrence.id) {
+            throw new Error(
+                'Element, id and pseudo-element should not occur more than once inside the selector'
+            );
+        }
+        this._validateOrder('id');
+        this.occurrence.id = true;
+        this.parts.push({ type: 'id', value });
+        return this;
+    }
+
+    class(value) {
+        this._validateOrder('class');
+        this.parts.push({ type: 'class', value });
+        return this;
+    }
+
+    attr(value) {
+        this._validateOrder('attr');
+        this.parts.push({ type: 'attr', value });
+        return this;
+    }
+
+    pseudoClass(value) {
+        this._validateOrder('pseudoClass');
+        this.parts.push({ type: 'pseudoClass', value });
+        return this;
+    }
+
+    pseudoElement(value) {
+        if (this.occurrence.pseudoElement) {
+            throw new Error(
+                'Element, id and pseudo-element should not occur more than once inside the selector'
+            );
+        }
+        this._validateOrder('pseudoElement');
+        this.occurrence.pseudoElement = true;
+        this.parts.push({ type: 'pseudoElement', value });
+        return this;
+    }
+
+    stringify() {
+        return this.parts
+            .map(part => {
+                switch (part.type) {
+                    case 'element':
+                        return part.value;
+                    case 'id':
+                        return `#${part.value}`;
+                    case 'class':
+                        return `.${part.value}`;
+                    case 'attr':
+                        return `[${part.value}]`;
+                    case 'pseudoClass':
+                        return `:${part.value}`;
+                    case 'pseudoElement':
+                        return `::${part.value}`;
+                    case 'combined':
+                        return part.value;
+                    case 'combinator':
+                        return ` ${part.value} `;
+                    default:
+                        return '';
+                }
+            })
+            .join('');
+    }
+}
+
+const cssSelectorBuilder = {
     element: function(value) {
-        throw new Error('Not implemented');
+        return new CssSelector().element(value);
     },
 
     id: function(value) {
-        throw new Error('Not implemented');
+        return new CssSelector().id(value);
     },
 
     class: function(value) {
-        throw new Error('Not implemented');
+        return new CssSelector().class(value);
     },
 
     attr: function(value) {
-        throw new Error('Not implemented');
+        return new CssSelector().attr(value);
     },
 
     pseudoClass: function(value) {
-        throw new Error('Not implemented');
+        return new CssSelector().pseudoClass(value);
     },
 
     pseudoElement: function(value) {
-        throw new Error('Not implemented');
+        return new CssSelector().pseudoElement(value);
     },
 
     combine: function(selector1, combinator, selector2) {
-        throw new Error('Not implemented');
+        const combined = new CssSelector();
+        combined.parts = [
+            { type: 'combined', value: selector1.stringify() },
+            { type: 'combinator', value: combinator },
+            { type: 'combined', value: selector2.stringify() },
+        ];
+        return combined;
     },
 };
-
 
 module.exports = {
     Rectangle: Rectangle,
