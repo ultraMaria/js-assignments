@@ -68,8 +68,55 @@ function createCompassPoints() {
  *   'nothing to do' => 'nothing to do'
  */
 function* expandBraces(str) {
-    throw new Error('Not implemented');
+    // Helper function to find the index of the matching closing brace
+    function findMatchingCloseBrace(str, start) {
+        let count = 1;
+        for (let i = start + 1; i < str.length; i++) {
+            if (str[i] === '{') count++;
+            else if (str[i] === '}') count--;
+            if (count === 0) return i;
+        }
+        return -1;
+    }
+
+    // Function to handle the actual brace expansion
+    function* expand(str) {
+        let i = 0;
+        while (i < str.length) {
+            if (str[i] === '{') {
+                // Find the matching closing brace
+                const closeIndex = findMatchingCloseBrace(str, i);
+                if (closeIndex === -1) {
+                    yield str;
+                    return;
+                }
+
+                // Get the content between braces and split by commas
+                const alternatives = str.slice(i + 1, closeIndex).split(',');
+
+                // Recursively expand the rest of the string
+                const rest = str.slice(closeIndex + 1);
+                for (const alt of alternatives) {
+                    // For each alternative, expand the rest of the string
+                    for (const expandedRest of expand(rest)) {
+                        yield str.slice(0, i) + alt + expandedRest;
+                    }
+                }
+                return; // Exit the function after handling the brace expansion
+            }
+            i++;
+        }
+        // If no braces are found, return the original string
+        yield str;
+    }
+
+    // Start the expansion
+    for (const result of expand(str)) {
+        yield result;
+    }
 }
+
+
 
 
 /**
@@ -100,7 +147,38 @@ function* expandBraces(str) {
  *
  */
 function getZigZagMatrix(n) {
-    throw new Error('Not implemented');
+    const matrix = new Array(n);
+    for (let i = 0; i < n; i++) {
+        matrix[i] = new Array(n).fill(0);
+    }
+
+    let num = 0;
+    let row = 0, col = 0;
+
+    for (let i = 0; i < n * n; i++) {
+        matrix[row][col] = num++;
+        if ((row + col) % 2 === 0) {
+            if (col === n - 1) {
+                row++;
+            } else if (row === 0) {
+                col++;
+            } else {
+                row--;
+                col++;
+            }
+        } else {
+            if (row === n - 1) {
+                col++;
+            } else if (col === 0) {
+                row++; 
+            } else {
+                row++;
+                col--;
+            }
+        }
+    }
+
+    return matrix;
 }
 
 
@@ -125,8 +203,61 @@ function getZigZagMatrix(n) {
  *
  */
 function canDominoesMakeRow(dominoes) {
-    throw new Error('Not implemented');
+    // Count the occurrences of each number on the dominoes
+    const countMap = {};
+    for (let [a, b] of dominoes) {
+        countMap[a] = (countMap[a] || 0) + 1;
+        countMap[b] = (countMap[b] || 0) + 1;
+    }
+
+    // Check how many numbers have an odd frequency
+    let oddCount = 0;
+    for (let count of Object.values(countMap)) {
+        if (count % 2 !== 0) {
+            oddCount++;
+        }
+    }
+
+    // There can be at most two odd occurrences for a valid arrangement
+    if (oddCount > 2) {
+        return false;
+    }
+
+    // To check connectivity, we'll use a DFS/BFS approach
+    const adjList = {};
+    const visited = new Set();
+
+    // Build an adjacency list representing the graph of domino connections
+    for (let [a, b] of dominoes) {
+        if (!adjList[a]) adjList[a] = [];
+        if (!adjList[b]) adjList[b] = [];
+        adjList[a].push(b);
+        adjList[b].push(a);
+    }
+
+    // DFS to check if the dominoes are connected
+    function dfs(node) {
+        visited.add(node);
+        for (let neighbor of adjList[node]) {
+            if (!visited.has(neighbor)) {
+                dfs(neighbor);
+            }
+        }
+    }
+
+    // Start DFS from the first node in the domino set
+    dfs(dominoes[0][0]);
+
+    // Check if all the numbers that appear in the dominoes are connected
+    for (let [a, b] of dominoes) {
+        if (!visited.has(a) || !visited.has(b)) {
+            return false;
+        }
+    }
+
+    return true;
 }
+
 
 
 /**
@@ -149,8 +280,36 @@ function canDominoesMakeRow(dominoes) {
  * [ 1, 2, 4, 5]          => '1,2,4,5'
  */
 function extractRanges(nums) {
-    throw new Error('Not implemented');
+    if (nums.length === 0) return '';
+
+    let result = [];
+    let start = nums[0]; // The first number in the current range
+    let end = nums[0];   // The last number in the current range
+
+    for (let i = 1; i <= nums.length; i++) {
+        if (nums[i] === end + 1) {
+            // If the current number is consecutive, extend the range
+            end = nums[i];
+        } else {
+            // If the sequence breaks, process the previous range
+            if (end - start >= 2) {
+                result.push(`${start}-${end}`);
+            } else {
+                // If the range has less than 3 numbers, include them individually
+                for (let j = start; j <= end; j++) {
+                    result.push(j.toString());
+                }
+            }
+
+            // Reset the range
+            start = nums[i];
+            end = nums[i];
+        }
+    }
+
+    return result.join(',');
 }
+
 
 module.exports = {
     createCompassPoints : createCompassPoints,
