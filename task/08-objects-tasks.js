@@ -143,7 +143,7 @@ class CssSelector {
     element(value) {
         if (this.occurrence.element) {
             throw new Error(
-                'Element, id and pseudo-element should not occur more than once inside the selector'
+                'Element, id and pseudo-element should not occur more then one time inside the selector'
             );
         }
         this._validateOrder('element');
@@ -155,7 +155,7 @@ class CssSelector {
     id(value) {
         if (this.occurrence.id) {
             throw new Error(
-                'Element, id and pseudo-element should not occur more than once inside the selector'
+                'Element, id and pseudo-element should not occur more then one time inside the selector'
             );
         }
         this._validateOrder('id');
@@ -185,7 +185,7 @@ class CssSelector {
     pseudoElement(value) {
         if (this.occurrence.pseudoElement) {
             throw new Error(
-                'Element, id and pseudo-element should not occur more than once inside the selector'
+                'Element, id and pseudo-element should not occur more then one time inside the selector'
             );
         }
         this._validateOrder('pseudoElement');
