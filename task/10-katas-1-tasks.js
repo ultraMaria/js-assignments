@@ -68,7 +68,7 @@ function createCompassPoints() {
  *   'nothing to do' => 'nothing to do'
  */
 function* expandBraces(str) {
-    // Helper function to find the index of the matching closing brace
+    // Helper function to find the matching closing brace
     function findMatchingCloseBrace(str, start) {
         let count = 1;
         for (let i = start + 1; i < str.length; i++) {
@@ -76,47 +76,66 @@ function* expandBraces(str) {
             else if (str[i] === '}') count--;
             if (count === 0) return i;
         }
-        return -1;
+        return -1; // No matching closing brace
     }
 
-    // Function to handle the actual brace expansion
-    function* expand(str) {
-        let i = 0;
-        while (i < str.length) {
-            if (str[i] === '{') {
-                // Find the matching closing brace
-                const closeIndex = findMatchingCloseBrace(str, i);
-                if (closeIndex === -1) {
-                    yield str;
-                    return;
-                }
-
-                // Get the content between braces and split by commas
-                const alternatives = str.slice(i + 1, closeIndex).split(',');
-
-                // Recursively expand the rest of the string
-                const rest = str.slice(closeIndex + 1);
-                for (const alt of alternatives) {
-                    // For each alternative, expand the rest of the string
-                    for (const expandedRest of expand(rest)) {
-                        yield str.slice(0, i) + alt + expandedRest;
-                    }
-                }
-                return; // Exit the function after handling the brace expansion
+    // Helper function to split alternatives inside braces
+    function splitAlternatives(str) {
+        const alternatives = [];
+        let start = 0;
+        let depth = 0;
+        for (let i = 0; i < str.length; i++) {
+            if (str[i] === '{') depth++;
+            else if (str[i] === '}') depth--;
+            else if (str[i] === ',' && depth === 0) {
+                alternatives.push(str.slice(start, i));
+                start = i + 1;
             }
-            i++;
         }
-        // If no braces are found, return the original string
-        yield str;
+        // Add the last alternative (even if it's an empty string)
+        alternatives.push(str.slice(start));
+        return alternatives;
     }
 
-    // Start the expansion
+    // Recursive function to expand braces
+    function* expand(str) {
+        const braceStart = str.indexOf('{');
+        if (braceStart === -1) {
+            yield str; // No braces, return the string as is
+            return;
+        }
+
+        const braceEnd = findMatchingCloseBrace(str, braceStart);
+        if (braceEnd === -1) {
+            yield str; // Invalid braces, return the string as is
+            return;
+        }
+
+        const prefix = str.slice(0, braceStart);
+        const suffix = str.slice(braceEnd + 1);
+        const alternatives = splitAlternatives(str.slice(braceStart + 1, braceEnd));
+
+        for (const alt of alternatives) {
+            for (const expandedAlt of expand(alt)) {
+                for (const result of expand(prefix + expandedAlt + suffix)) {
+                    yield result;
+                }
+            }
+        }
+    }
+
+    // Use a Set to avoid duplicate results
+    const results = new Set();
     for (const result of expand(str)) {
+        results.add(result);
+    }
+
+    // Yield the results in sorted order (to match the test case)
+    const sortedResults = Array.from(results).sort();
+    for (const result of sortedResults) {
         yield result;
     }
 }
-
-
 
 
 /**
