@@ -34,8 +34,38 @@
  *
  */
 function parseBankAccount(bankAccount) {
-    throw new Error('Not implemented');
+    // Mapping of 3x3 blocks to digits
+    const digitMap = {
+        ' _ | ||_|': '0',
+        '     |  |': '1',
+        ' _  _||_ ': '2',
+        ' _  _| _|': '3',
+        '   |_|  |': '4',
+        ' _ |_  _|': '5',
+        ' _ |_ |_|': '6',
+        ' _   |  |': '7',
+        ' _ |_||_|': '8',
+        ' _ |_| _|': '9'
+    };
+
+    // Remove extra spaces and split the bank account string into three lines
+    const lines = bankAccount.split('\n').map(line => line.split('').join(''));
+
+    // This will store the resulting bank account number as a string
+    let accountNumber = '';
+
+    // Iterate through each "digit" (3 columns at a time)
+    for (let i = 0; i < lines[0].length; i += 3) {
+        // Extract each 3x3 block (slice 3 characters from each line)
+        const block = lines.map(line => line.slice(i, i + 3)).join('');
+
+        // Find the corresponding digit for the block
+        accountNumber += digitMap[block];
+    }
+
+    return parseInt(accountNumber, 10); // Convert to number and return
 }
+
 
 
 /**
@@ -63,7 +93,33 @@ function parseBankAccount(bankAccount) {
  *                                                                                                'characters.'
  */
 function* wrapText(text, columns) {
-    throw new Error('Not implemented');
+    // Step 1: Split the input text into words
+    const words = text.split(' ');
+
+    // Step 2: Initialize an empty line
+    let currentLine = '';
+
+    // Step 3: Iterate through the words
+    for (const word of words) {
+        // If the current line is empty, we can add the word directly
+        if (currentLine.length === 0) {
+            currentLine = word;
+        } else {
+            // If adding this word exceeds the column limit, yield the current line and start a new one
+            if (currentLine.length + 1 + word.length > columns) {
+                yield currentLine;
+                currentLine = word; // Start a new line with the current word
+            } else {
+                // Otherwise, just add the word to the current line
+                currentLine += ' ' + word;
+            }
+        }
+    }
+
+    // Step 4: Yield the remaining line (if any)
+    if (currentLine) {
+        yield currentLine;
+    }
 }
 
 
@@ -97,12 +153,73 @@ const PokerRank = {
     TwoPairs: 2,
     OnePair: 1,
     HighCard: 0
-}
+};
 
 function getPokerHandRank(hand) {
-    throw new Error('Not implemented');
-}
+    // Helper function to get the rank (value) of a card
+    const rankValues = {
+        '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
+        '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14
+    };
 
+    // Helper function to check if the hand is a sequence (straight)
+    function isStraight(ranks) {
+        // Sort ranks in ascending order
+        ranks = ranks.sort((a, b) => a - b);
+
+        // Check for regular straight (e.g., 5,6,7,8,9)
+        let isRegularStraight = true;
+        for (let i = 1; i < ranks.length; i++) {
+            if (ranks[i] !== ranks[i - 1] + 1) {
+                isRegularStraight = false;
+                break;
+            }
+        }
+
+        // Check for low straight (A,2,3,4,5)
+        const isLowStraight = JSON.stringify(ranks) === JSON.stringify([2, 3, 4, 5, 14]);
+
+        return isRegularStraight || isLowStraight;
+    }
+
+    // Split hand into ranks and suits
+    const ranks = hand.map(card => rankValues[card.slice(0, -1)]);
+    const suits = hand.map(card => card.slice(-1));
+
+    // Check if all cards are of the same suit (flush)
+    const isFlush = suits.every(suit => suit === suits[0]);
+
+    // Check for Straight
+    const isStraightHand = isStraight(ranks);
+
+    // Count occurrences of each rank
+    const rankCount = {};
+    for (let rank of ranks) {
+        rankCount[rank] = (rankCount[rank] || 0) + 1;
+    }
+    const rankCounts = Object.values(rankCount).sort((a, b) => b - a);
+
+    // Check hand rankings
+    if (isFlush && isStraightHand) {
+        return PokerRank.StraightFlush;
+    } else if (rankCounts[0] === 4) {
+        return PokerRank.FourOfKind;
+    } else if (rankCounts[0] === 3 && rankCounts[1] === 2) {
+        return PokerRank.FullHouse;
+    } else if (isFlush) {
+        return PokerRank.Flush;
+    } else if (isStraightHand) {
+        return PokerRank.Straight;
+    } else if (rankCounts[0] === 3) {
+        return PokerRank.ThreeOfKind;
+    } else if (rankCounts[0] === 2 && rankCounts[1] === 2) {
+        return PokerRank.TwoPairs;
+    } else if (rankCounts[0] === 2) {
+        return PokerRank.OnePair;
+    } else {
+        return PokerRank.HighCard;
+    }
+}
 
 /**
  * Returns the rectangles sequence of specified figure.
