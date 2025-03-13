@@ -92,7 +92,21 @@ function UrlShortener() {
 UrlShortener.prototype = {
 
     encode: function(url) {
-        throw new Error('Not implemented');
+        let encoded = '';
+        let num = 0;
+
+        // Convert the URL to a number
+        for (let i = 0; i < url.length; i++) {
+            num = num * 256 + url.charCodeAt(i);
+        }
+
+        // Convert the number to the base of allowed characters
+        while (num > 0) {
+            encoded = this.urlAllowedChars[num % this.base] + encoded;
+            num = Math.floor(num / this.base);
+        }
+
+        return encoded;
     },
     
     decode: function(code) {
